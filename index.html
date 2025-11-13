@@ -32,7 +32,7 @@
         button:hover {
             background: #45a049;
         }
-        #dashboard { display: none; }
+        #loginBox, #dashboard { display: none; }
         .key {
             background: #333;
             padding: 5px;
@@ -44,6 +44,15 @@
 <body>
 
     <h1>C00L HTML Key System</h1>
+
+    <!-- SIGN UP BOX -->
+    <div id="signupBox" class="box">
+        <h2>Sign Up</h2>
+        <input id="newUser" placeholder="Create username">
+        <input id="newPass" placeholder="Create password" type="password">
+        <button onclick="signup()">Sign Up</button>
+        <p id="signupStatus"></p>
+    </div>
 
     <!-- LOGIN BOX -->
     <div id="loginBox" class="box">
@@ -72,26 +81,43 @@
     </div>
 
     <script>
-        let USERNAME = "admin";
-        let PASSWORD = "1234";
+        let savedUser = null;
+        let savedPass = null;
         let keys = [];
 
+        // SIGN UP
+        function signup() {
+            let u = document.getElementById("newUser").value;
+            let p = document.getElementById("newPass").value;
+
+            if (u === "" || p === "") {
+                document.getElementById("signupStatus").innerText = "Fill all fields!";
+                return;
+            }
+
+            savedUser = u;
+            savedPass = p;
+
+            document.getElementById("signupBox").style.display = "none";
+            document.getElementById("loginBox").style.display = "block";
+        }
+
+        // LOGIN
         function login() {
             let u = document.getElementById("user").value;
             let p = document.getElementById("pass").value;
 
-            if (u === USERNAME && p === PASSWORD) {
+            if (u === savedUser && p === savedPass) {
                 document.getElementById("loginBox").style.display = "none";
                 document.getElementById("dashboard").style.display = "block";
             } else {
-                document.getElementById("loginStatus").innerText = "Invalid login!";
+                document.getElementById("loginStatus").innerText = "Wrong username or password";
             }
         }
 
-        function logout() {
-            location.reload();
-        }
+        function logout() { location.reload(); }
 
+        // GENERATORS
         function genNumeric() {
             let key = "";
             for (let g = 0; g < 4; g++) {
@@ -117,6 +143,7 @@
             alert("Generated Hex Key: " + key);
         }
 
+        // VALIDATION
         function validateKey() {
             let input = document.getElementById("validateInput").value;
             if (keys.includes(input)) {
@@ -126,6 +153,7 @@
             }
         }
 
+        // SHOW KEYS
         function displayKeys() {
             let div = document.getElementById("keyList");
             div.innerHTML = "";
