@@ -1,125 +1,140 @@
---========================================================--
---   C00L Key System - Pure Lua (One File)
---   Features:
---     • Username/password login
---     • Key generator (numeric + hex)
---     • Key validator
---     • Key storage in memory
---========================================================--
+<!DOCTYPE html>
+<html>
+<head>
+    <title>C00L Key System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        .box {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            width: 350px;
+            margin: auto;
+        }
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: none;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #dashboard { display: none; }
+        .key {
+            background: #333;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
 
-local USERNAME = "admin"
-local PASSWORD = "1234"
+    <h1>C00L HTML Key System</h1>
 
-local generatedKeys = {}   -- stores keys
+    <!-- LOGIN BOX -->
+    <div id="loginBox" class="box">
+        <h2>Login</h2>
+        <input id="user" placeholder="Username">
+        <input id="pass" placeholder="Password" type="password">
+        <button onclick="login()">Login</button>
+        <p id="loginStatus"></p>
+    </div>
 
---========================================================--
---   Helper: generate numeric key   (XXXX-XXXX-XXXX-XXXX)
---========================================================--
-local function generateNumericKey()
-    local key = ""
-    for g = 1, 4 do
-        local seg = ""
-        for i = 1, 4 do
-            seg = seg .. tostring(math.random(0, 9))
-        end
-        key = key .. seg .. (g < 4 and "-" or "")
-    end
-    return key
-end
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="box">
+        <h2>Dashboard</h2>
 
---========================================================--
---   Helper: generate 52-char hex key
---========================================================--
-local function generateHexKey()
-    local chars = "abcdef0123456789"
-    local key = ""
-    for i = 1, 52 do
-        local rand = math.random(1, #chars)
-        key = key .. chars:sub(rand, rand)
-    end
-    return key
-end
+        <button onclick="genNumeric()">Generate Numeric Key</button>
+        <button onclick="genHex()">Generate Hex Key</button>
 
---========================================================--
---   Key Validator
---========================================================--
-local function validateKey(key)
-    for _, k in ipairs(generatedKeys) do
-        if k == key then
-            return true
-        end
-    end
-    return false
-end
+        <input id="validateInput" placeholder="Enter key to validate">
+        <button onclick="validateKey()">Validate Key</button>
+        <p id="validateStatus"></p>
 
---========================================================--
---   Dashboard Menu
---========================================================--
-local function dashboard()
-    while true do
-        print("\n===== C00L LUA KEY SYSTEM =====")
-        print("1) Generate Numeric Key")
-        print("2) Generate Hex Key (52 chars)")
-        print("3) Validate Key")
-        print("4) Show All Keys")
-        print("5) Exit")
-        io.write("Select option: ")
+        <h3>Saved Keys:</h3>
+        <div id="keyList"></div>
 
-        local choice = io.read()
+        <button style="background:#f44336;" onclick="logout()">Logout</button>
+    </div>
 
-        if choice == "1" then
-            local key = generateNumericKey()
-            table.insert(generatedKeys, key)
-            print("Generated Numeric Key: " .. key)
+    <script>
+        let USERNAME = "admin";
+        let PASSWORD = "1234";
+        let keys = [];
 
-        elseif choice == "2" then
-            local key = generateHexKey()
-            table.insert(generatedKeys, key)
-            print("Generated Hex Key: " .. key)
+        function login() {
+            let u = document.getElementById("user").value;
+            let p = document.getElementById("pass").value;
 
-        elseif choice == "3" then
-            io.write("Enter key to validate: ")
-            local key = io.read()
-            if validateKey(key) then
-                print("VALID ✓")
-            else
-                print("INVALID ✗")
-            end
+            if (u === USERNAME && p === PASSWORD) {
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+            } else {
+                document.getElementById("loginStatus").innerText = "Invalid login!";
+            }
+        }
 
-        elseif choice == "4" then
-            print("\nSaved Keys:")
-            for _, k in ipairs(generatedKeys) do
-                print(" - " .. k)
-            end
+        function logout() {
+            location.reload();
+        }
 
-        elseif choice == "5" then
-            print("Goodbye!")
-            break
+        function genNumeric() {
+            let key = "";
+            for (let g = 0; g < 4; g++) {
+                let segment = "";
+                for (let i = 0; i < 4; i++) {
+                    segment += Math.floor(Math.random() * 10);
+                }
+                key += segment + (g < 3 ? "-" : "");
+            }
+            keys.push(key);
+            displayKeys();
+            alert("Generated Numeric Key: " + key);
+        }
 
-        else
-            print("Invalid option.")
-        end
-    end
-end
+        function genHex() {
+            let chars = "abcdef0123456789";
+            let key = "";
+            for (let i = 0; i < 52; i++) {
+                key += chars[Math.floor(Math.random() * chars.length)];
+            }
+            keys.push(key);
+            displayKeys();
+            alert("Generated Hex Key: " + key);
+        }
 
---========================================================--
---   Login System
---========================================================--
-local function login()
-    print("===== LOGIN =====")
-    io.write("Username: ")
-    local u = io.read()
+        function validateKey() {
+            let input = document.getElementById("validateInput").value;
+            if (keys.includes(input)) {
+                document.getElementById("validateStatus").innerText = "VALID ✓";
+            } else {
+                document.getElementById("validateStatus").innerText = "INVALID ✗";
+            }
+        }
 
-    io.write("Password: ")
-    local p = io.read()
+        function displayKeys() {
+            let div = document.getElementById("keyList");
+            div.innerHTML = "";
+            keys.forEach(k => {
+                div.innerHTML += `<div class="key">${k}</div>`;
+            });
+        }
+    </script>
 
-    if u == USERNAME and p == PASSWORD then
-        print("\nLogin success!\n")
-        dashboard()
-    else
-        print("Invalid login. Try again.")
-    end
-end
+</body>
+</html>
 
--- Start program
-login()
