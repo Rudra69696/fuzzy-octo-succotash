@@ -1,224 +1,398 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Platoboost — DEMO (NOT REAL)</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Platoboost — DEMO Dashboard (Not Real)</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
-  body { background:#071029; color:#e6f0fb; }
-  .brand { font-weight:700; letter-spacing:1px; }
-  .badge-demo { background:#ff4757; color:#fff; font-weight:700; }
-  .card-demo { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.03); }
-  .muted { color:#9fb3d6; }
-  footer { opacity:.7; font-size:.85rem; }
-  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; }
+  :root{
+    --bg:#051026;
+    --panel:#07142a;
+    --muted:#9fb3d6;
+    --accent:#2dd4bf;
+    --accent-2:#60a5fa;
+    --card:#0e1a2a;
+    --danger:#ff6b6b;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+    background:linear-gradient(180deg,var(--bg),#031021 140%);
+    color:#e6f3ff;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  .app {
+    max-width:1100px;
+    margin:28px auto;
+    padding:18px;
+  }
+  .brand {
+    font-weight:700;
+    letter-spacing:1px;
+    color:var(--accent-2);
+  }
+  .demo-badge {
+    background:linear-gradient(90deg,var(--danger),#ff3b30);
+    color:white;
+    font-weight:700;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:0.8rem;
+  }
+  .hero {
+    display:flex;
+    gap:18px;
+    align-items:center;
+    margin-bottom:18px;
+  }
+  .hero .left {flex:1}
+  .card-panel {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    padding:18px;
+    border-radius:12px;
+  }
+  input, textarea, select{
+    background:rgba(255,255,255,0.02);
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.03);
+    border-radius:8px;
+  }
+  .muted { color:var(--muted); }
+  .mono { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono","Courier New",monospace; }
+  .btn-accent { background:var(--accent-2); color:#032; border:0; }
+  .btn-accent:hover { filter:brightness(1.05); }
+  .kbd {
+    background:rgba(0,0,0,0.2);
+    padding:6px 8px;
+    border-radius:6px;
+    font-size:0.9rem;
+    color:#dbeafe;
+  }
+  nav.topbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .nav-right {display:flex; gap:8px; align-items:center;}
+  .small-muted { font-size:0.85rem; color:var(--muted); }
+  .list-keys { max-height:240px; overflow:auto; background:transparent; border-radius:8px; padding:8px; }
+  .tag { font-size:0.8rem; padding:6px 8px; border-radius:8px; background:rgba(255,255,255,0.02); color:var(--muted); }
+  footer { color:var(--muted); text-align:center; margin-top:18px; font-size:0.85rem; }
+  .flex { display:flex; gap:10px; align-items:center; }
+  .spacer { flex:1 }
+  .mini { font-size:0.85rem; color:var(--muted) }
+  .danger { background:var(--danger); color:#fff }
+  .ok { background: #16a34a; color:#fff; border-radius:6px; padding:6px 8px; }
+  .chip { background:rgba(255,255,255,0.03); padding:6px 10px; border-radius:999px; color:var(--muted); }
+
+  /* small responsive */
+  @media (max-width:880px){
+    .hero { flex-direction:column; align-items:stretch; }
+  }
 </style>
 </head>
 <body>
-<nav class="navbar navbar-dark" style="background:#051126;">
-  <div class="container-fluid">
-    <a class="navbar-brand brand" href="#">PLATBOOST <small class="text-muted">DEMO</small></a>
-    <div>
-      <span class="badge badge-demo p-2">NOT THE REAL SITE</span>
+<div class="app container">
+
+  <nav class="topbar">
+    <div class="flex">
+      <div class="brand">PLATBOOST <span class="small-muted">DEMO</span></div>
+      <div style="margin-left:12px" class="demo-badge">NOT THE REAL SITE</div>
+      <div class="spacer"></div>
+      <div class="mini muted">Local demo — no external calls</div>
+    </div>
+    <div class="nav-right">
+      <div class="chip mono" id="loggedUser">guest</div>
+      <button class="btn btn-sm btn-outline-light" id="btnShowLogin">Login</button>
+      <button class="btn btn-sm btn-outline-light" id="btnShowActivate">Activate</button>
+      <button class="btn btn-sm btn-accent" id="btnShowDash">Dashboard</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="left card-panel">
+      <h3>Platoboost — <span class="muted">Demo Dashboard (UI Prototype)</span></h3>
+      <p class="muted">This is a design & testing prototype for UI/UX. <strong>It is NOT the real Platoboost.</strong> Everything runs in your browser and is stored in your localStorage. Use it to demo activation flows, key generation and validation, and admin key management.</p>
+
+      <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+        <div><strong>Admin login:</strong> <span class="kbd">admin / password</span></div>
+        <div><strong>Example key:</strong> <span class="mono tag">7028-5638-6262-9183</span></div>
+      </div>
+    </div>
+
+    <div style="width:320px" class="card-panel">
+      <h6 class="muted">Quick actions</h6>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-accent" id="quickGen">Generate Key</button>
+        <button class="btn btn-outline-light" id="quickValidate">Validate</button>
+      </div>
+      <div style="margin-top:10px" class="muted small-muted">Saved keys (local): <span id="countKeys" class="tag">0</span></div>
     </div>
   </div>
-</nav>
 
-<main class="container py-4">
-  <div class="row g-4">
-    <div class="col-md-6">
-      <div class="card card-demo p-4">
-        <h4>Activation Helper <small class="muted">(demo)</small></h4>
-        <p class="muted">Paste an old dash.platoboost.com link and this demo will convert it into the working auth.platoboost.app format. This is a harmless UI-only converter (no requests performed).</p>
+  <div class="row" style="margin-top:16px">
+    <div class="col-md-7">
+      <div class="card-panel mb-3">
+        <h5>Activation</h5>
+        <p class="muted">Enter an activation code to simulate an activation. In a real system this would call an API. This demo issues a demo key on successful activation.</p>
 
-        <label class="form-label">Activation link or code</label>
-        <input id="inputLink" class="form-control mb-2" placeholder="https://dash.platoboost.com/activate?code=XXXX or just code"/>
-        <div class="d-flex gap-2">
-          <button id="btnConvert" class="btn btn-primary">Convert to auth.platoboost.app</button>
-          <button id="btnFakeActivate" class="btn btn-outline-light">Fake Activate (demo)</button>
+        <div class="mb-2">
+          <input id="activateCode" placeholder="Enter activation code (e.g. ABCD-1234)" class="form-control" />
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-accent" id="btnActivate">Activate</button>
+          <button class="btn btn-outline-light" id="btnGenInvite">Create Invite (admin)</button>
+          <div class="spacer"></div>
+          <div id="activateResult" class="mini muted"></div>
         </div>
 
         <hr/>
-        <label class="form-label">Resulting URL (demo)</label>
-        <div id="resultUrl" class="form-control mono mb-2" style="background:#021226; border:1px solid rgba(255,255,255,0.03);"></div>
 
-        <div id="fakeResponse" class="mt-2"></div>
+        <h6 class="muted">Activation log</h6>
+        <div id="actLog" style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;height:120px;overflow:auto;" class="mono small-muted"></div>
+      </div>
+
+      <div class="card-panel">
+        <h5>Validator</h5>
+        <p class="muted">Paste a key and check if it was issued by this demo.</p>
+        <div class="input-group mb-2">
+          <input id="valKey" class="form-control mono" placeholder="Paste generated key here" />
+          <button class="btn btn-outline-light" id="btnCheck">Check</button>
+        </div>
+        <div id="valResult" class="muted"></div>
       </div>
     </div>
 
-    <div class="col-md-6">
-      <div class="card card-demo p-4">
-        <h4>Fake Dashboard (UI prototype)</h4>
-        <p class="muted">This is a local UI prototype only. No real account or keys are created.</p>
-
-        <div class="row mb-2">
-          <div class="col">
-            <label class="form-label">Username</label>
-            <input id="uName" class="form-control" placeholder="demo_admin" value="demo_admin"/>
-          </div>
-          <div class="col">
-            <label class="form-label">Password</label>
-            <input id="uPass" class="form-control" placeholder="password" value="demo"/>
-          </div>
+    <div class="col-md-5">
+      <div class="card-panel mb-3">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h5 style="margin:0">Dashboard</h5>
+          <div class="muted">Local admin tools</div>
         </div>
-        <div class="d-flex gap-2 mb-3">
-          <button id="btnLogin" class="btn btn-success">Login (demo)</button>
-          <button id="btnLogout" class="btn btn-outline-light">Logout</button>
+        <p class="muted small-muted">Generate keys, list them, export or remove. Keys persist in your browser's localStorage.</p>
+
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <select id="keyType" class="form-select">
+            <option value="numeric">Numeric (4x4)</option>
+            <option value="hex">Hex (52 chars)</option>
+          </select>
+          <button class="btn btn-accent" id="btnGen">Generate</button>
         </div>
 
-        <div id="dashboardArea" style="display:none;">
-          <h6 class="mb-2">Key Generator</h6>
-          <div class="d-flex gap-2 mb-3">
-            <button id="genNum" class="btn btn-primary">Generate Numeric Key</button>
-            <button id="genHex" class="btn btn-secondary">Generate Hex (52)</button>
-          </div>
-          <label class="form-label">Last generated</label>
-          <div id="lastKey" class="form-control mono mb-3" style="background:#021226;"></div>
-
-          <h6 class="mb-2">Key Validator (demo)</h6>
-          <div class="input-group mb-2">
-            <input id="valKey" class="form-control mono" placeholder="paste key to validate"/>
-            <button id="btnValidate" class="btn btn-outline-light">Validate</button>
-          </div>
-          <div id="valResult" class="mt-1"></div>
-
-          <h6 class="mt-3">Saved Keys (demo)</h6>
-          <pre id="savedKeys" style="background:#021226;color:#cfe9ff;padding:10px;border-radius:6px;height:120px;overflow:auto;"></pre>
+        <div style="margin-top:12px; display:flex; gap:8px;">
+          <button class="btn btn-outline-light" id="btnExport">Export .txt</button>
+          <button class="btn btn-outline-light" id="btnClear">Clear All</button>
         </div>
+
+        <hr/>
+
+        <h6 class="muted">Issued Keys (<span id="keyCount">0</span>)</h6>
+        <div class="list-keys" id="keyList"></div>
       </div>
-    </div>
-  </div>
 
-  <div class="row mt-4">
-    <div class="col">
-      <div class="card card-demo p-3">
-        <h6 class="mb-2">Important — Demo Notice</h6>
-        <p class="muted mb-0">This single-file page is a <strong>design & testing prototype only</strong>. It is not affiliated with or a copy of any real service. Do not use this to impersonate or deceive others. Always be transparent when demoing functionality.</p>
+      <div class="card-panel">
+        <h6 class="muted">Invites (admin)</h6>
+        <div style="display:flex;gap:8px">
+          <input id="inviteInput" class="form-control" placeholder="Optional custom invite code" />
+          <button class="btn btn-accent" id="btnCreateInvite">Create</button>
+        </div>
+        <div style="margin-top:8px" id="inviteList" class="mono small-muted"></div>
       </div>
     </div>
   </div>
-</main>
 
-<footer class="text-center py-3 muted">
-  Prototype • Client-only • No server calls • Save file as <code>platoboost-demo.html</code>
-</footer>
+  <footer>
+    Demo prototype • Local only • Not affiliated with any real service
+  </footer>
+</div>
 
 <script>
+/* =========================
+   Demo Platoboost-like site
+   All data stored in localStorage under 'platoboost_demo'
+   ========================= */
+
 (function(){
-  // local "DB" for demo keys
-  const saved = [];
-
-  function extractCode(input) {
-    if(!input) return "";
-    input = input.trim();
-    // handle full URL
-    try {
-      const u = new URL(input);
-      // if domain contains dash.platoboost.com, get code param
-      if(u.searchParams && u.searchParams.get('code')) return u.searchParams.get('code');
-    } catch(e) {
-      // not a URL, maybe just the code
-    }
-    // fallback: if input looks like code (alphanumeric)
-    return input;
-  }
-
-  function makeAuthUrl(code) {
-    if(!code) return "";
-    return "https://auth.platoboost.app/activate?code=" + encodeURIComponent(code);
-  }
-
-  // UI hooks
-  const inputLink = document.getElementById('inputLink');
-  const btnConvert = document.getElementById('btnConvert');
-  const resultUrl = document.getElementById('resultUrl');
-  const btnFakeActivate = document.getElementById('btnFakeActivate');
-  const fakeResponse = document.getElementById('fakeResponse');
-
-  btnConvert.addEventListener('click', () => {
-    const code = extractCode(inputLink.value);
-    const url = makeAuthUrl(code);
-    resultUrl.textContent = url || "Enter a code or dash.platoboost link above";
-    fakeResponse.innerHTML = "";
-  });
-
-  btnFakeActivate.addEventListener('click', () => {
-    const code = extractCode(inputLink.value);
-    if(!code) {
-      fakeResponse.innerHTML = '<div class="alert alert-warning">Provide an activation code or URL first.</div>';
-      return;
-    }
-    // Demo "activation" response (local only)
-    const demoKey = "DEMO-" + Math.random().toString(36).slice(2,10).toUpperCase();
-    fakeResponse.innerHTML = '<div class="alert alert-success">Activation OK (demo). Issued key: <strong class="mono">'+demoKey+'</strong></div>';
-    // store demo key
-    saved.push(demoKey);
-    updateSaved();
-  });
-
-  // dashboard interactions
-  const btnLogin = document.getElementById('btnLogin');
-  const btnLogout = document.getElementById('btnLogout');
-  const dashboardArea = document.getElementById('dashboardArea');
-  const genNum = document.getElementById('genNum');
-  const genHex = document.getElementById('genHex');
-  const lastKey = document.getElementById('lastKey');
-  const valKey = document.getElementById('valKey');
-  const btnValidate = document.getElementById('btnValidate');
-  const valResult = document.getElementById('valResult');
-  const savedKeys = document.getElementById('savedKeys');
-
-  btnLogin.addEventListener('click', () => {
-    dashboardArea.style.display = 'block';
-    btnLogin.disabled = true;
-  });
-  btnLogout.addEventListener('click', () => {
-    dashboardArea.style.display = 'none';
-    btnLogin.disabled = false;
-  });
-
-  function formatNumeric() {
-    const groups = [];
-    for(let g=0; g<4; g++){
-      let seg='';
-      for(let i=0; i<4; i++) seg += Math.floor(Math.random()*10);
-      groups.push(seg);
-    }
-    return groups.join('-');
-  }
-  function formatHex52(){
+  // Utilities
+  function qs(id){ return document.getElementById(id); }
+  function randHex(n){
     const chars = 'abcdef0123456789';
-    let s='';
-    for(let i=0;i<52;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+    let s = '';
+    for(let i=0;i<n;i++) s += chars[Math.floor(Math.random()*chars.length)];
     return s;
   }
-
-  genNum.addEventListener('click', ()=>{
-    const k = formatNumeric();
-    lastKey.textContent = k;
-    saved.push(k);
-    updateSaved();
-  });
-  genHex.addEventListener('click', ()=>{
-    const k = formatHex52();
-    lastKey.textContent = k;
-    saved.push(k);
-    updateSaved();
-  });
-
-  btnValidate.addEventListener('click', ()=>{
-    const q = valKey.value.trim();
-    if(!q) { valResult.innerHTML = '<div class="text-warning">Enter a key to validate</div>'; return; }
-    const ok = saved.includes(q);
-    if(ok) valResult.innerHTML = '<div class="text-success">VALID (demo)</div>';
-    else valResult.innerHTML = '<div class="text-danger">INVALID or not issued by this demo</div>';
-  });
-
-  function updateSaved(){
-    savedKeys.textContent = saved.length ? saved.join('\\n') : '(no keys issued)';
+  function randNumericSeg(len){
+    let s='';
+    for(let i=0;i<len;i++) s += Math.floor(Math.random()*10);
+    return s;
   }
-  updateSaved();
+  function generateNumericKey(groups=4,size=4){
+    let parts=[];
+    for(let g=0;g<groups;g++){ parts.push(randNumericSeg(size)); }
+    return parts.join('-');
+  }
+  function generateHex52(){ return randHex(52); }
+
+  // Storage wrapper
+  const STORE_KEY = 'platoboost_demo_v1';
+  function loadState(){
+    const js = localStorage.getItem(STORE_KEY);
+    if(!js) return { keys:[], invites:[], activations:[], users:[{u:'admin',p:'password'}], logged:null };
+    try{ return JSON.parse(js); }catch(e){ return { keys:[], invites:[], activations:[], users:[{u:'admin',p:'password'}], logged:null }; }
+  }
+  function saveState(state){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+  let state = loadState();
+
+  // Initialize default admin and invite only once
+  if(!state._init){
+    state._init = true;
+    if(!state.users || state.users.length===0) state.users = [{u:'admin',p:'password'}];
+    // create a starter invite
+    state.invites.push({code:'DEMO-INVITE-001', created:Date.now(), used:false});
+    saveState(state);
+  }
+
+  // UI elements
+  const keyListEl = qs('keyList');
+  const keyCountEl = qs('keyCount');
+  const countKeysEl = qs('countKeys');
+  const actLogEl = qs('actLog');
+  const valResultEl = qs('valResult');
+  const activateResultEl = qs('activateResult');
+  const inviteListEl = qs('inviteList');
+
+  // Render functions
+  function renderKeys(){
+    keyListEl.innerHTML = '';
+    state.keys.forEach((k, idx)=>{
+      const div = document.createElement('div');
+      div.style.display='flex'; div.style.justifyContent='space-between'; div.style.padding='6px';
+      div.style.borderBottom='1px dashed rgba(255,255,255,0.02)';
+      const left = document.createElement('div');
+      left.innerHTML = `<div class="mono">${k.key}</div><div class="mini muted">${k.type} • ${new Date(k.created).toLocaleString()}</div>`;
+      const right = document.createElement('div');
+      const btnCopy = document.createElement('button'); btnCopy.className='btn btn-sm btn-outline-light'; btnCopy.innerText='Copy';
+      btnCopy.onclick = ()=>{ navigator.clipboard && navigator.clipboard.writeText(k.key); btnCopy.innerText='Copied'; setTimeout(()=>btnCopy.innerText='Copy',900); };
+      const btnDel = document.createElement('button'); btnDel.className='btn btn-sm btn-danger ms-2'; btnDel.innerText='Delete';
+      btnDel.onclick = ()=>{ if(confirm('Delete this key?')) { state.keys.splice(idx,1); saveState(state); renderAll(); } };
+      right.appendChild(btnCopy); right.appendChild(btnDel);
+      div.appendChild(left); div.appendChild(right);
+      keyListEl.appendChild(div);
+    });
+    keyCountEl.innerText = state.keys.length;
+    countKeysEl.innerText = state.keys.length;
+  }
+
+  function renderInvites(){
+    inviteListEl.innerHTML = state.invites.map(i=> `${i.code} ${i.used?('(used)'):''}`).join('\\n') || '(none)';
+  }
+
+  function renderActLog(){
+    actLogEl.innerText = state.activations.slice().reverse().map(a=> `${new Date(a.when).toLocaleString()} — code: ${a.code} → ${a.result}`).join('\\n') || '(no activations yet)';
+  }
+
+  function renderAll(){
+    renderKeys(); renderInvites(); renderActLog();
+    qs('loggedUser').innerText = state.logged ? state.logged.u : 'guest';
+  }
+
+  // Actions
+  qs('btnGen').addEventListener('click', function(){
+    const t = qs('keyType').value;
+    let k = t==='numeric' ? generateNumericKey() : generateHex52();
+    state.keys.push({ key:k, type:t, created:Date.now() });
+    saveState(state);
+    renderAll();
+  });
+
+  qs('btnExport').addEventListener('click', function(){
+    if(!state.keys.length){ alert('No keys to export'); return; }
+    const txt = state.keys.map(k=>k.key).join('\\n');
+    const blob = new Blob([txt], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='issued_keys.txt'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+
+  qs('btnClear').addEventListener('click', function(){
+    if(!confirm('Clear all keys?')) return;
+    state.keys = []; saveState(state); renderAll();
+  });
+
+  qs('btnCreateInvite').addEventListener('click', function(){
+    const v = qs('inviteInput').value.trim() || ('INV-'+Math.random().toString(36).slice(2,9).toUpperCase());
+    state.invites.push({ code:v, created:Date.now(), used:false }); saveState(state); renderAll(); qs('inviteInput').value='';
+  });
+
+  qs('btnActivate').addEventListener('click', function(){
+    const code = qs('activateCode').value.trim();
+    if(!code){ activateResultEl.innerText='Enter a code'; return; }
+    const inv = state.invites.find(i=>i.code===code && !i.used);
+    let res;
+    if(inv){
+      inv.used = true;
+      // issue demo key
+      const demoKey = generateNumericKey();
+      state.keys.push({ key:demoKey, type:'numeric', created:Date.now(), issuedBy:'activation' });
+      state.activations.push({ code:code, when:Date.now(), result:'OK: issued '+demoKey });
+      saveState(state);
+      activateResultEl.innerHTML = 'Activation OK — issued key: <span class="mono">'+demoKey+'</span>';
+    } else {
+      state.activations.push({ code:code, when:Date.now(), result:'FAILED' });
+      saveState(state);
+      activateResultEl.innerText = 'Invalid or used invite code';
+    }
+    renderAll();
+  });
+
+  qs('btnCheck').addEventListener('click', function(){
+    const q = qs('valKey').value.trim();
+    if(!q){ valResultEl.innerText='Enter a key'; return; }
+    const found = state.keys.find(k=>k.key===q);
+    if(found) valResultEl.innerHTML = '<span class="ok">VALID</span> • type: '+found.type;
+    else valResultEl.innerHTML = '<span class="danger">INVALID</span>';
+  });
+
+  // Quick actions & navigation
+  qs('btnShowLogin').addEventListener('click', function(){ doLoginPrompt(); });
+  qs('btnShowActivate').addEventListener('click', function(){ window.scrollTo({top:300,behavior:"smooth"}); qs('activateCode').focus(); });
+  qs('btnShowDash').addEventListener('click', function(){ window.scrollTo({top:600,behavior:"smooth"}); });
+
+  qs('quickGen').addEventListener('click', function(){ // generate default numeric
+    const k = generateNumericKey();
+    state.keys.push({ key:k, type:'numeric', created:Date.now() }); saveState(state); renderAll();
+    alert('Generated: '+k);
+  });
+
+  qs('quickValidate').addEventListener('click', function(){
+    const q = prompt('Paste key to validate:');
+    if(!q) return;
+    const ok = state.keys.some(k=>k.key===q.trim());
+    alert(ok ? 'VALID' : 'INVALID');
+  });
+
+  // Login prompt (simple)
+  function doLoginPrompt(){
+    const u = prompt('Username (demo):','admin');
+    if(u===null) return;
+    const p = prompt('Password (demo):','password');
+    if(p===null) return;
+    const found = state.users.find(x=>x.u===u && x.p===p);
+    if(found){ state.logged = {u:u}; saveState(state); renderAll(); alert('Logged in as '+u); }
+    else alert('Invalid credentials');
+  }
+
+  // initialize UI
+  renderAll();
+
+  // Expose for debugging
+  window.PlatoboostDemo = { state, saveState, renderAll };
 
 })();
 </script>
