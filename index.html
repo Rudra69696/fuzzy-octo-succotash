@@ -1,159 +1,226 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>C00L Key System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #111;
-            color: white;
-            text-align: center;
-            padding: 40px;
-        }
-        .box {
-            background: #222;
-            padding: 20px;
-            border-radius: 10px;
-            width: 350px;
-            margin: auto;
-        }
-        input, button {
-            width: 90%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: none;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #45a049;
-        }
-        #loginBox, #dashboard { display: none; }
-        .key {
-            background: #333;
-            padding: 5px;
-            border-radius: 5px;
-            margin: 5px;
-        }
-    </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Platoboost — DEMO (NOT REAL)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+  body { background:#071029; color:#e6f0fb; }
+  .brand { font-weight:700; letter-spacing:1px; }
+  .badge-demo { background:#ff4757; color:#fff; font-weight:700; }
+  .card-demo { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.03); }
+  .muted { color:#9fb3d6; }
+  footer { opacity:.7; font-size:.85rem; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; }
+</style>
 </head>
 <body>
+<nav class="navbar navbar-dark" style="background:#051126;">
+  <div class="container-fluid">
+    <a class="navbar-brand brand" href="#">PLATBOOST <small class="text-muted">DEMO</small></a>
+    <div>
+      <span class="badge badge-demo p-2">NOT THE REAL SITE</span>
+    </div>
+  </div>
+</nav>
 
-    <h1>C00L HTML Key System</h1>
+<main class="container py-4">
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card card-demo p-4">
+        <h4>Activation Helper <small class="muted">(demo)</small></h4>
+        <p class="muted">Paste an old dash.platoboost.com link and this demo will convert it into the working auth.platoboost.app format. This is a harmless UI-only converter (no requests performed).</p>
 
-    <!-- SIGN UP BOX -->
-    <div id="signupBox" class="box">
-        <h2>Sign Up</h2>
-        <input id="newUser" placeholder="Create username">
-        <input id="newPass" placeholder="Create password" type="password">
-        <button onclick="signup()">Sign Up</button>
-        <p id="signupStatus"></p>
+        <label class="form-label">Activation link or code</label>
+        <input id="inputLink" class="form-control mb-2" placeholder="https://dash.platoboost.com/activate?code=XXXX or just code"/>
+        <div class="d-flex gap-2">
+          <button id="btnConvert" class="btn btn-primary">Convert to auth.platoboost.app</button>
+          <button id="btnFakeActivate" class="btn btn-outline-light">Fake Activate (demo)</button>
+        </div>
+
+        <hr/>
+        <label class="form-label">Resulting URL (demo)</label>
+        <div id="resultUrl" class="form-control mono mb-2" style="background:#021226; border:1px solid rgba(255,255,255,0.03);"></div>
+
+        <div id="fakeResponse" class="mt-2"></div>
+      </div>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="box">
-        <h2>Dashboard</h2>
+    <div class="col-md-6">
+      <div class="card card-demo p-4">
+        <h4>Fake Dashboard (UI prototype)</h4>
+        <p class="muted">This is a local UI prototype only. No real account or keys are created.</p>
 
-        <button onclick="genNumeric()">Generate Numeric Key</button>
-        <button onclick="genHex()">Generate Hex Key</button>
+        <div class="row mb-2">
+          <div class="col">
+            <label class="form-label">Username</label>
+            <input id="uName" class="form-control" placeholder="demo_admin" value="demo_admin"/>
+          </div>
+          <div class="col">
+            <label class="form-label">Password</label>
+            <input id="uPass" class="form-control" placeholder="password" value="demo"/>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mb-3">
+          <button id="btnLogin" class="btn btn-success">Login (demo)</button>
+          <button id="btnLogout" class="btn btn-outline-light">Logout</button>
+        </div>
 
-        <input id="validateInput" placeholder="Enter key to validate">
-        <button onclick="validateKey()">Validate Key</button>
-        <p id="validateStatus"></p>
+        <div id="dashboardArea" style="display:none;">
+          <h6 class="mb-2">Key Generator</h6>
+          <div class="d-flex gap-2 mb-3">
+            <button id="genNum" class="btn btn-primary">Generate Numeric Key</button>
+            <button id="genHex" class="btn btn-secondary">Generate Hex (52)</button>
+          </div>
+          <label class="form-label">Last generated</label>
+          <div id="lastKey" class="form-control mono mb-3" style="background:#021226;"></div>
 
-        <h3>Saved Keys:</h3>
-        <div id="keyList"></div>
+          <h6 class="mb-2">Key Validator (demo)</h6>
+          <div class="input-group mb-2">
+            <input id="valKey" class="form-control mono" placeholder="paste key to validate"/>
+            <button id="btnValidate" class="btn btn-outline-light">Validate</button>
+          </div>
+          <div id="valResult" class="mt-1"></div>
 
-        <button style="background:#f44336;" onclick="logout()">Logout</button>
+          <h6 class="mt-3">Saved Keys (demo)</h6>
+          <pre id="savedKeys" style="background:#021226;color:#cfe9ff;padding:10px;border-radius:6px;height:120px;overflow:auto;"></pre>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        let savedUser = null;
-        let savedPass = null;
-        let keys = [];
+  <div class="row mt-4">
+    <div class="col">
+      <div class="card card-demo p-3">
+        <h6 class="mb-2">Important — Demo Notice</h6>
+        <p class="muted mb-0">This single-file page is a <strong>design & testing prototype only</strong>. It is not affiliated with or a copy of any real service. Do not use this to impersonate or deceive others. Always be transparent when demoing functionality.</p>
+      </div>
+    </div>
+  </div>
+</main>
 
-        // SIGN UP
-        function signup() {
-            let u = document.getElementById("newUser").value;
-            let p = document.getElementById("newPass").value;
+<footer class="text-center py-3 muted">
+  Prototype • Client-only • No server calls • Save file as <code>platoboost-demo.html</code>
+</footer>
 
-            if (u === "" || p === "") {
-                document.getElementById("signupStatus").innerText = "Fill all fields!";
-                return;
-            }
+<script>
+(function(){
+  // local "DB" for demo keys
+  const saved = [];
 
-            savedUser = u;
-            savedPass = p;
+  function extractCode(input) {
+    if(!input) return "";
+    input = input.trim();
+    // handle full URL
+    try {
+      const u = new URL(input);
+      // if domain contains dash.platoboost.com, get code param
+      if(u.searchParams && u.searchParams.get('code')) return u.searchParams.get('code');
+    } catch(e) {
+      // not a URL, maybe just the code
+    }
+    // fallback: if input looks like code (alphanumeric)
+    return input;
+  }
 
-            document.getElementById("signupBox").style.display = "none";
-            document.getElementById("loginBox").style.display = "block";
-        }
+  function makeAuthUrl(code) {
+    if(!code) return "";
+    return "https://auth.platoboost.app/activate?code=" + encodeURIComponent(code);
+  }
 
-        // LOGIN
-        function login() {
-            let u = document.getElementById("user").value;
-            let p = document.getElementById("pass").value;
+  // UI hooks
+  const inputLink = document.getElementById('inputLink');
+  const btnConvert = document.getElementById('btnConvert');
+  const resultUrl = document.getElementById('resultUrl');
+  const btnFakeActivate = document.getElementById('btnFakeActivate');
+  const fakeResponse = document.getElementById('fakeResponse');
 
-            if (u === savedUser && p === savedPass) {
-                document.getElementById("loginBox").style.display = "none";
-                document.getElementById("dashboard").style.display = "block";
-            } else {
-                document.getElementById("loginStatus").innerText = "Wrong username or password";
-            }
-        }
+  btnConvert.addEventListener('click', () => {
+    const code = extractCode(inputLink.value);
+    const url = makeAuthUrl(code);
+    resultUrl.textContent = url || "Enter a code or dash.platoboost link above";
+    fakeResponse.innerHTML = "";
+  });
 
-        function logout() { location.reload(); }
+  btnFakeActivate.addEventListener('click', () => {
+    const code = extractCode(inputLink.value);
+    if(!code) {
+      fakeResponse.innerHTML = '<div class="alert alert-warning">Provide an activation code or URL first.</div>';
+      return;
+    }
+    // Demo "activation" response (local only)
+    const demoKey = "DEMO-" + Math.random().toString(36).slice(2,10).toUpperCase();
+    fakeResponse.innerHTML = '<div class="alert alert-success">Activation OK (demo). Issued key: <strong class="mono">'+demoKey+'</strong></div>';
+    // store demo key
+    saved.push(demoKey);
+    updateSaved();
+  });
 
-        // GENERATORS
-        function genNumeric() {
-            let key = "";
-            for (let g = 0; g < 4; g++) {
-                let segment = "";
-                for (let i = 0; i < 4; i++) {
-                    segment += Math.floor(Math.random() * 10);
-                }
-                key += segment + (g < 3 ? "-" : "");
-            }
-            keys.push(key);
-            displayKeys();
-            alert("Generated Numeric Key: " + key);
-        }
+  // dashboard interactions
+  const btnLogin = document.getElementById('btnLogin');
+  const btnLogout = document.getElementById('btnLogout');
+  const dashboardArea = document.getElementById('dashboardArea');
+  const genNum = document.getElementById('genNum');
+  const genHex = document.getElementById('genHex');
+  const lastKey = document.getElementById('lastKey');
+  const valKey = document.getElementById('valKey');
+  const btnValidate = document.getElementById('btnValidate');
+  const valResult = document.getElementById('valResult');
+  const savedKeys = document.getElementById('savedKeys');
 
-        function genHex() {
-            let chars = "abcdef0123456789";
-            let key = "";
-            for (let i = 0; i < 52; i++) {
-                key += chars[Math.floor(Math.random() * chars.length)];
-            }
-            keys.push(key);
-            displayKeys();
-            alert("Generated Hex Key: " + key);
-        }
+  btnLogin.addEventListener('click', () => {
+    dashboardArea.style.display = 'block';
+    btnLogin.disabled = true;
+  });
+  btnLogout.addEventListener('click', () => {
+    dashboardArea.style.display = 'none';
+    btnLogin.disabled = false;
+  });
 
-        // VALIDATION
-        function validateKey() {
-            let input = document.getElementById("validateInput").value;
-            if (keys.includes(input)) {
-                document.getElementById("validateStatus").innerText = "VALID ✓";
-            } else {
-                document.getElementById("validateStatus").innerText = "INVALID ✗";
-            }
-        }
+  function formatNumeric() {
+    const groups = [];
+    for(let g=0; g<4; g++){
+      let seg='';
+      for(let i=0; i<4; i++) seg += Math.floor(Math.random()*10);
+      groups.push(seg);
+    }
+    return groups.join('-');
+  }
+  function formatHex52(){
+    const chars = 'abcdef0123456789';
+    let s='';
+    for(let i=0;i<52;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+    return s;
+  }
 
-        // SHOW KEYS
-        function displayKeys() {
-            let div = document.getElementById("keyList");
-            div.innerHTML = "";
-            keys.forEach(k => {
-                div.innerHTML += `<div class="key">${k}</div>`;
-            });
-        }
-    </script>
+  genNum.addEventListener('click', ()=>{
+    const k = formatNumeric();
+    lastKey.textContent = k;
+    saved.push(k);
+    updateSaved();
+  });
+  genHex.addEventListener('click', ()=>{
+    const k = formatHex52();
+    lastKey.textContent = k;
+    saved.push(k);
+    updateSaved();
+  });
 
+  btnValidate.addEventListener('click', ()=>{
+    const q = valKey.value.trim();
+    if(!q) { valResult.innerHTML = '<div class="text-warning">Enter a key to validate</div>'; return; }
+    const ok = saved.includes(q);
+    if(ok) valResult.innerHTML = '<div class="text-success">VALID (demo)</div>';
+    else valResult.innerHTML = '<div class="text-danger">INVALID or not issued by this demo</div>';
+  });
+
+  function updateSaved(){
+    savedKeys.textContent = saved.length ? saved.join('\\n') : '(no keys issued)';
+  }
+  updateSaved();
+
+})();
+</script>
 </body>
 </html>
-
